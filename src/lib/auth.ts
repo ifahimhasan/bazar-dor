@@ -4,6 +4,13 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { memoryAdapter } from "better-auth/adapters/memory";
 import { nextCookies } from "better-auth/next-js";
 import { MongoClient } from "mongodb";
+import dns from "node:dns";
+
+// Some local ISPs refuse the SRV lookup used by "mongodb+srv://" links
+// (querySrv ECONNREFUSED). Use public DNS servers for local development.
+if (process.env.NODE_ENV !== "production") {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+}
 
 /**
  * Database: MongoDB when MONGODB_URI is set (production / Vercel).

@@ -4,7 +4,14 @@ import { redirect } from "next/navigation";
 import { auth } from "./auth";
 
 export async function getSession() {
-  return auth.api.getSession({ headers: await headers() });
+  // read headers outside try/catch so Next.js can mark the route as dynamic
+  const requestHeaders = await headers();
+  try {
+    return await auth.api.getSession({ headers: requestHeaders });
+  } catch (err) {
+    console.error("[session] could not read session:", err);
+    return null;
+  }
 }
 
 /** Server-side guard for protected pages */
