@@ -2,8 +2,8 @@
 
 **আজকের বাজারের দাম এক নজরে** — a Bangla market-price tracker for everyday essentials in Bangladesh. Browse today's prices for rice, lentils, oil, vegetables, fish, meat, eggs/milk and spices, see which items got costlier or cheaper today, and compare prices across markets all over the country.
 
-🔗 **Live:** _add your Vercel link here_  
-📦 **Repository:** _add your GitHub link here_
+🔗 **Live:** [bazardor-fahim.netlify.app](https://bazardor-fahim.netlify.app)  
+📦 **Repository:** [github.com/ifahimhasan/bazar-dor](https://github.com/ifahimhasan/bazar-dor)
 
 ---
 
@@ -27,7 +27,7 @@
 | **MongoDB** | User / session storage (BetterAuth MongoDB adapter) |
 | **react-hot-toast** | Toast notifications |
 | **@fontsource/hind-siliguri** | Self-hosted Bangla font |
-| **Vercel** | Deployment |
+| **Netlify** | Deployment (Next.js runtime with server functions) |
 
 ## 🗺️ Routes
 
@@ -65,18 +65,36 @@ npm run dev
 | Variable | Notes |
 | --- | --- |
 | `BETTER_AUTH_SECRET` | Long random string (`openssl rand -hex 32`) |
-| `BETTER_AUTH_URL` | `http://localhost:3000` locally, your live URL in production |
+| `BETTER_AUTH_URL` | `http://localhost:3000` locally, `https://bazardor-fahim.netlify.app` in production |
 | `MONGODB_URI` | MongoDB Atlas connection string (without it, accounts are kept in memory — dev only) |
 | `MONGODB_DB` | Database name (default `bazardor`) |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth — redirect URI: `<BETTER_AUTH_URL>/api/auth/callback/google` |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | GitHub OAuth — callback URL: `<BETTER_AUTH_URL>/api/auth/callback/github` |
 
-### Deploying to Vercel
+### Deploying to Netlify
 
-1. Import the GitHub repo in Vercel.
-2. Add all the environment variables above (set `BETTER_AUTH_URL` to the live URL).
-3. In MongoDB Atlas → Network Access, allow `0.0.0.0/0`.
-4. Add the live callback URLs to your Google and GitHub OAuth apps.
+1. Push the project to GitHub (`.env.local` stays out of the repo via `.gitignore`).
+2. Netlify → **Add new project → Import an existing project → GitHub** → select `bazar-dor`. Build command `npm run build` is detected automatically.
+3. Add the environment variables above, with `BETTER_AUTH_URL=https://<your-site>.netlify.app`.
+4. MongoDB Atlas → **Network Access** → add `0.0.0.0/0` so Netlify's servers can connect.
+5. **Google OAuth** (Google Cloud Console → Clients): add both origins and redirect URIs, then publish the app under **Audience**:
+   - `http://localhost:3000` · `http://localhost:3000/api/auth/callback/google`
+   - `https://<your-site>.netlify.app` · `https://<your-site>.netlify.app/api/auth/callback/google`
+6. **GitHub OAuth**: a GitHub OAuth App allows only one callback URL, so create two apps:
+   - Local: callback `http://localhost:3000/api/auth/callback/github` (keys in `.env.local`)
+   - Live: callback `https://<your-site>.netlify.app/api/auth/callback/github` (keys in Netlify)
+7. After changing environment variables, run **Deploys → Trigger deploy → Deploy project**.
+
+> ⚠️ Do **not** drag-and-drop the `.next` folder (Netlify Drop). Auth, the route proxy and dynamic pages need server functions, which only work when Netlify builds the project itself.
+
+### Troubleshooting
+
+| Problem | Fix |
+| --- | --- |
+| `querySrv ECONNREFUSED` when running locally | Some ISPs block the SRV lookup of `mongodb+srv://` links. Use Atlas → Connect → Drivers → **Legacy URI String** (`mongodb://…shard-00-00…`) as `MONGODB_URI`. |
+| `bad auth : authentication failed` | Wrong database password in `MONGODB_URI`. Reset it in Atlas → Database Users → Edit. |
+| Hydration warning about `cz-shortcut-listen` / `data-gr-ext-installed` | Caused by browser extensions (ColorZilla, Grammarly) — harmless, already suppressed on `<body>`. |
+| Social login shows "এই সোশ্যাল লগইন এখনো চালু করা হয়নি" | Client ID / secret for that provider is missing in the environment. |
 
 ---
 
