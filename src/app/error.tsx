@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function Error({ reset }: { error: Error; reset: () => void }) {
   return (
     <section className="mx-auto flex max-w-xl flex-col items-center gap-3 rounded-3xl border border-line bg-surface px-6 py-12 text-center">
@@ -12,9 +14,9 @@ export default function Error({ reset }: { error: Error; reset: () => void }) {
         <button type="button" onClick={reset} className="btn btn-primary btn-sm sm:btn-md">
           আবার চেষ্টা করুন
         </button>
-        <a href="/" className="btn btn-ghost btn-sm sm:btn-md">
+        <Link href="/" className="btn btn-ghost btn-sm sm:btn-md">
           হোম পেজে ফিরে যান
-        </a>
+        </Link>
       </div>
     </section>
   );
