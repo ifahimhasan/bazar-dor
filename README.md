@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛒 বাজার দর (BazarDor)
 
-## Getting Started
+**আজকের বাজারের দাম এক নজরে** — a Bangla market-price tracker for everyday essentials in Bangladesh. Browse today's prices for rice, lentils, oil, vegetables, fish, meat, eggs/milk and spices, see which items got costlier or cheaper today, and compare prices across markets all over the country.
 
-First, run the development server:
+🔗 **Live:** _add your Vercel link here_  
+📦 **Repository:** _add your GitHub link here_
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## ✨ Key Features
+
+1. **Live price ticker & movers** — an infinitely scrolling marquee of every product (emoji, name, ৳/unit, ▲/▼ %) plus "আজ দাম বেড়েছে ▲" and "আজ দাম কমেছে ▼" sections showing the top 6 risers and fallers.
+2. **Search, filter & smart sort** — search products by name, filter by category chips, and sort by price (ডিফল্ট / কম থেকে বেশি / বেশি থেকে কম). Sorting is numeric and Bengali-numeral safe (`১,৮৫০` > `৯৯`).
+3. **Detailed product pages (protected)** — min / max / average price, yesterday / last week / last month comparison, and a market-by-market price table across divisions, cheapest market highlighted.
+4. **Authentication with BetterAuth** — email/password sign up & sign in, Google and GitHub social login, protected routes with redirect-back, and toast feedback for every action.
+5. **Profile & update information** — `/profile` shows account and session details; `/profile/update` lets the user change their name and photo (`authClient.updateUser`).
+6. **Fully Bangla & responsive UI** — Bengali digits and dates (`বুধবার, ২৮ অক্টোবর, ২০২৬`), Hind Siliguri font, skeleton loaders, friendly 404 pages, and layouts tuned for mobile, tablet and desktop.
+
+## 🧰 Technologies Used
+
+| Technology | Purpose |
+| --- | --- |
+| **Next.js 16 (App Router)** | Pages, routing, server components, route proxy |
+| **TypeScript** | Type-safe code |
+| **Tailwind CSS v4 + DaisyUI 5** | Styling, custom `bazar` theme from the Figma tokens |
+| **BetterAuth** | Email/password + Google + GitHub authentication |
+| **MongoDB** | User / session storage (BetterAuth MongoDB adapter) |
+| **react-hot-toast** | Toast notifications |
+| **@fontsource/hind-siliguri** | Self-hosted Bangla font |
+| **Vercel** | Deployment |
+
+## 🗺️ Routes
+
+| Route | Description |
+| --- | --- |
+| `/` | Hero, price movers, all products (search / filter / sort) |
+| `/category/[slug]` | Products of a category with sort, skeleton & empty / 404 state |
+| `/product/[slug]` | 🔒 Product details — summary, history, market table |
+| `/signin`, `/signup` | Authentication pages |
+| `/profile` | 🔒 My profile |
+| `/profile/update` | 🔒 Update information (name, photo) |
+
+## 🔌 API
+
+Data comes from the BazarDor API (`/products`, `/products?category=chal`, `/categories`). The app tries the main URL first, then the mirrors, and finally falls back to a bundled snapshot so the site never breaks if the API is down.
+
+```
+https://openapi.programming-hero.com/api/bazardor
+https://api.api-store.workers.dev/api/bazardor
+https://api.abcz.workers.dev/api/bazardor
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Getting Started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+git clone <your-repo-url>
+cd bazar-dor
+npm install
+cp .env.example .env.local   # then fill the values
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Environment variables
 
-## Learn More
+| Variable | Notes |
+| --- | --- |
+| `BETTER_AUTH_SECRET` | Long random string (`openssl rand -hex 32`) |
+| `BETTER_AUTH_URL` | `http://localhost:3000` locally, your live URL in production |
+| `MONGODB_URI` | MongoDB Atlas connection string (without it, accounts are kept in memory — dev only) |
+| `MONGODB_DB` | Database name (default `bazardor`) |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth — redirect URI: `<BETTER_AUTH_URL>/api/auth/callback/google` |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | GitHub OAuth — callback URL: `<BETTER_AUTH_URL>/api/auth/callback/github` |
 
-To learn more about Next.js, take a look at the following resources:
+### Deploying to Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Import the GitHub repo in Vercel.
+2. Add all the environment variables above (set `BETTER_AUTH_URL` to the live URL).
+3. In MongoDB Atlas → Network Access, allow `0.0.0.0/0`.
+4. Add the live callback URLs to your Google and GitHub OAuth apps.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+সকল দাম সম্ভাব্য; বাজার অবস্থার ওপর নির্ভর করে পরিবর্তিত হয়।
